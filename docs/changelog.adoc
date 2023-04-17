@@ -6,7 +6,21 @@ For a details of release notes see https://github.com/quartz-scheduler/quartz/re
 
 This release is still work in progress under `master` branch!
 
-THIS RELEASE REQUIRES JDK8
+Most Significant Changes This Release:
+
+* Quartz 2.4.0 now requires minimum Java version of Java 8
+* Quartz build system moved to Gradle
+* 3rd party libraries (slf4j, log4j, Hikari) upgraded to more recent versions
+* Maven POMs generated from gradle declare 3rd party dependencies as "runtime" scope
+* Removal of old TerracottaJobStore
+* "NativeJob" class removed from "quartz-jobs" artifact.  This resolves security concerns
+  related to code execution.  While it is possible to safely use this Job class, it is
+  a risk for users that don't engage some thought.   If you wish to still use this job
+  or something like it, the source code for it can now be found as "example15".
+* Example programs can now simply be executed via gradle. See the "exmaples_guide.txt"
+  file in the examples folder of the quartz repository for full description and info.
+
+All changes/updates:
 
 - https://github.com/quartz-scheduler/quartz/milestone/6[Open Issues]
 - https://github.com/quartz-scheduler/quartz/milestone/6?closed=1[Completed Issues]

@@ -1,0 +1,121 @@
+plugins {
+    id 'java'
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(path: ":quartz")
+    implementation project(path: ":quartz-jobs")
+
+    implementation "org.slf4j:slf4j-api:$slf4jVersion"
+    implementation "org.slf4j:slf4j-log4j12:$slf4jVersion"
+}
+
+
+task runExample1(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 1"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example1.SimpleExample"
+}
+
+task runExample2(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 2"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example2.SimpleTriggerExample"
+}
+task runExample3(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 3"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example3.CronTriggerExample"
+}
+task runExample4(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 4"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example4.JobStateExample"
+}
+task runExample5(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 5"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example5.MisfireExample"
+}
+task runExample6(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 6"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example6.JobExceptionExample"
+}
+task runExample7(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 7"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example7.InterruptExample"
+}
+task runExample8(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 8"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example8.CalendarExample"
+}
+task runExample9(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 9"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example9.ListenerExample"
+}
+task runExample10(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 10"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example10/quartz.properties", "org.quartz.examples.example10.PlugInExample"
+}
+task runExample11(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 11"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example11/quartz.properties", "org.quartz.examples.example11.LoadExample"
+}
+task runExample12Client(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 12 Client"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example12/client.properties", "org.quartz.examples.example12.RemoteClientExample"
+}
+task runExample12Server(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 12 Server"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example12/server.properties", "org.quartz.examples.example12.RemoteServerExample"
+}
+task runExample13Instance1(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 13 Instance 1"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example13/instance1.properties", "org.quartz.examples.example13.ClusterExample"
+}
+task runExample13Instance2(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 13 Instance 2"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example13/instance2.properties", "org.quartz.examples.example13.ClusterExample"
+}
+task runExample14(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 14"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example14.PriorityExample"
+}
+task runExample15(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run Example 15"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example15.NativeJobExample"
+}

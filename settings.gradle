@@ -1,0 +1,8 @@
+
+rootProject.name = 'quartz-scheduler'
+
+include 'quartz-stubs'
+include 'quartz-jobs'
+include 'quartz'
+include 'examples'
+
