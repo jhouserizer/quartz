@@ -1,16 +1,18 @@
-plugins {
-    id 'java'
-    id 'java-library'
+allprojects {
+    group 'org.quartz-scheduler'
+    version quartzVersion
 }
 
 subprojects {
-    apply plugin: 'java-library'
+    repositories {
+        mavenCentral()
+    }
+
+    plugins.withType(JavaBasePlugin) {
+        java {
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(11)
+            }
+        }
+    }
 }
-
-allprojects {
-    group 'org.quartz-scheduler'
-    version '2.4.0-SNAPSHOT'
-
-    java.sourceCompatibility(JavaVersion.VERSION_11)
-}
-

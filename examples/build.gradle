@@ -2,120 +2,91 @@ plugins {
     id 'java'
 }
 
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    implementation project(path: ":quartz")
-    implementation project(path: ":quartz-jobs")
+    implementation project(':quartz')
+    implementation project(':quartz-jobs')
 
     implementation "org.slf4j:slf4j-api:$slf4jVersion"
     implementation "org.slf4j:slf4j-log4j12:$slf4jVersion"
 }
 
-
-task runExample1(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 1"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example1.SimpleExample"
+tasks.withType(JavaExec).configureEach {
+    classpath = sourceSets.main.runtimeClasspath
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
 }
 
-task runExample2(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 2"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example2.SimpleTriggerExample"
+tasks.register('runExample1', JavaExec) {
+    description = 'Run Example 1'
+    mainClass = 'org.quartz.examples.example1.SimpleExample'
 }
-task runExample3(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 3"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example3.CronTriggerExample"
+
+tasks.register('runExample2', JavaExec) {
+    description = 'Run Example 2'
+    mainClass = 'org.quartz.examples.example2.SimpleTriggerExample'
 }
-task runExample4(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 4"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example4.JobStateExample"
+tasks.register('runExample3', JavaExec) {
+    description = 'Run Example 3'
+    mainClass = 'org.quartz.examples.example3.CronTriggerExample'
 }
-task runExample5(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 5"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example5.MisfireExample"
+tasks.register('runExample4', JavaExec) {
+    description = 'Run Example 4'
+    mainClass = 'org.quartz.examples.example4.JobStateExample'
 }
-task runExample6(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 6"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example6.JobExceptionExample"
+tasks.register('runExample5', JavaExec) {
+    description = 'Run Example 5'
+    mainClass = 'org.quartz.examples.example5.MisfireExample'
 }
-task runExample7(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 7"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example7.InterruptExample"
+tasks.register('runExample6', JavaExec) {
+    description = 'Run Example 6'
+    mainClass = 'org.quartz.examples.example6.JobExceptionExample'
 }
-task runExample8(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 8"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example8.CalendarExample"
+tasks.register('runExample7', JavaExec) {
+    description = 'Run Example 7'
+    mainClass = 'org.quartz.examples.example7.InterruptExample'
 }
-task runExample9(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 9"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example9.ListenerExample"
+tasks.register('runExample8', JavaExec) {
+    description = 'Run Example 8'
+    mainClass = 'org.quartz.examples.example8.CalendarExample'
 }
-task runExample10(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 10"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example10/quartz.properties", "org.quartz.examples.example10.PlugInExample"
+tasks.register('runExample9', JavaExec) {
+    description = 'Run Example 9'
+    mainClass = 'org.quartz.examples.example9.ListenerExample'
 }
-task runExample11(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 11"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example11/quartz.properties", "org.quartz.examples.example11.LoadExample"
+tasks.register('runExample10', JavaExec) {
+    description = 'Run Example 10'
+    mainClass = 'org.quartz.examples.example10.PlugInExample'
+    systemProperty('org.quartz.properties', 'org/quartz/examples/example10/quartz.properties')
 }
-task runExample12Client(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 12 Client"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example12/client.properties", "org.quartz.examples.example12.RemoteClientExample"
+tasks.register('runExample11', JavaExec) {
+    description = 'Run Example 11'
+    mainClass = 'org.quartz.examples.example11.LoadExample'
+    systemProperty 'org.quartz.properties', 'org/quartz/examples/example11/quartz.properties'
 }
-task runExample12Server(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 12 Server"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example12/server.properties", "org.quartz.examples.example12.RemoteServerExample"
+tasks.register('runExample12Client', JavaExec) {
+    description = 'Run Example 12 Client'
+    mainClass = 'org.quartz.examples.example12.RemoteClientExample'
+    systemProperty 'org.quartz.properties', 'org/quartz/examples/example12/client.properties'
 }
-task runExample13Instance1(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 13 Instance 1"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example13/instance1.properties", "org.quartz.examples.example13.ClusterExample"
+tasks.register('runExample12Server', JavaExec) {
+    description = 'Run Example 12 Server'
+    mainClass = 'org.quartz.examples.example12.RemoteServerExample'
+    systemProperty 'org.quartz.properties', 'org/quartz/examples/example12/server.properties'
 }
-task runExample13Instance2(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 13 Instance 2"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "-Dorg.quartz.properties=org/quartz/examples/example13/instance2.properties", "org.quartz.examples.example13.ClusterExample"
+tasks.register('runExample13Instance1', JavaExec) {
+    description = 'Run Example 13 Instance 1'
+    mainClass = 'org.quartz.examples.example13.ClusterExample'
+    systemProperty 'org.quartz.properties', 'org/quartz/examples/example13/instance1.properties'
 }
-task runExample14(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 14"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example14.PriorityExample"
+tasks.register('runExample13Instance2', JavaExec) {
+    description = 'Run Example 13 Instance 2'
+    mainClass = 'org.quartz.examples.example13.ClusterExample'
+    systemProperty 'org.quartz.properties', 'org/quartz/examples/example13/instance2.properties'
 }
-task runExample15(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run Example 15"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "org.quartz.examples.example15.NativeJobExample"
+tasks.register('runExample14', JavaExec) {
+    description = 'Run Example 14'
+    mainClass = 'org.quartz.examples.example14.PriorityExample'
+}
+tasks.register('runExample15', JavaExec) {
+    description = 'Run Example 15'
+    mainClass = "org.quartz.examples.example15.NativeJobExample"
 }

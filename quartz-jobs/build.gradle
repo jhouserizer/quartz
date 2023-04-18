@@ -1,13 +1,12 @@
-
-repositories {
-    mavenCentral()
+plugins {
+    id 'java-library'
 }
 
 dependencies {
-    implementation project(path: ":quartz")
+    implementation project(':quartz')
 
     implementation "org.slf4j:slf4j-api:$slf4jVersion"
-    implementation "org.slf4j:slf4j-log4j12:$slf4jVersion"
+    runtimeOnly "org.slf4j:slf4j-log4j12:$slf4jVersion"
 
     implementation 'javax.jms:javax.jms-api:2.0.1'
     implementation 'javax.mail:mail:1.4.7'

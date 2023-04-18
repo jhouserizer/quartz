@@ -1,27 +1,9 @@
-# Maven and test related noise
-target/
+# gradle
+.gradle/
+**/build/
+!**/src/**/build
+
+# misplaced test artifacts
 derby.log
 logs/
 tmp/
-
-# IntelliJ IDEA noise
-out/
-.idea/
-*.iml
-*.ipr
-*.iws
-
-# Eclipse IDE noise
-.settings/
-.project
-.classpath
-
-# NetBeans noise
-nbproject/
-
-# Other Editor's noise
-*~
-*.swp
-
-# MacOSX noise
-.DS_Store

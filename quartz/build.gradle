@@ -1,4 +1,5 @@
 plugins {
+    id 'java-library'
     id 'maven-publish'
 }
 
@@ -9,10 +10,6 @@ repositories {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = "$project.group"
-            artifactId = 'quartz'
-            version = "$project.version"
-
             pom {
                 name = "$project.name"
                 description = 'Quartz Enterprise Job Scheduler'
@@ -36,10 +33,10 @@ publishing {
 }
 
 dependencies {
-    compileOnly project(path: ":quartz-stubs")
+    compileOnly project(':quartz-stubs')
 
     implementation "org.slf4j:slf4j-api:$slf4jVersion"
-    implementation "org.slf4j:slf4j-log4j12:$slf4jVersion"
+    runtimeOnly "org.slf4j:slf4j-log4j12:$slf4jVersion"
     implementation "com.mchange:c3p0:$c3p0Version"
     implementation "com.zaxxer:HikariCP:$hikaricpVersion"
     compileOnly "jboss:jboss-common:$jbossVersion"
@@ -76,19 +73,19 @@ java {
 javadoc {
     options {
         docTitle = "Quartz Enterprise Job Scheduler $project.version API"
-        encoding = "UTF-8"
-        outputLevel = "quiet"
+        encoding = 'UTF-8'
+        outputLevel = JavadocOutputLevel.QUIET
         splitIndex = false
         author = true;
         windowTitle = "Quartz Enterprise Job Scheduler $project.version API"
-        bottom = "Copyright 2001-2023, Terracotta, Inc."
+        bottom = 'Copyright 2001-2023, Terracotta, Inc.'
     }
 }
 
 
 processResources {
-    filesMatching("**/quartz-build.properties") {
+    filesMatching('**/quartz-build.properties') {
 
-        expand(['version': "${project.version}", "fullname" : "${fullname}", "name" : "${project.name}"])
+        expand([version: project.version, fullname: project.fullname, name: project.name])
     }
 }
