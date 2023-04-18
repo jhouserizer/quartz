@@ -1,18 +1,18 @@
-/* 
+/*
  * All content copyright Terracotta, Inc., unless otherwise indicated. All rights reserved.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not 
- * use this file except in compliance with the License. You may obtain a copy 
- * of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
  * under the License.
- * 
+ *
  */
 
 package org.quartz.impl.jdbcjobstore;
@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.quartz.Calendar;
 import org.quartz.Job;
@@ -61,6 +62,8 @@ import org.quartz.spi.TriggerFiredResult;
 import org.quartz.utils.DBConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -2799,29 +2802,15 @@ public abstract class JobStoreSupport implements JobStore, Constants {
         } else {
             lockName = null;
         }
-        return executeInNonManagedTXLock(lockName, 
-                new TransactionCallback<List<OperableTrigger>>() {
-                    public List<OperableTrigger> execute(Connection conn) throws JobPersistenceException {
-                        return acquireNextTrigger(conn, noLaterThan, maxCount, timeWindow);
-                    }
-                },
-                new TransactionValidator<List<OperableTrigger>>() {
-                    public Boolean validate(Connection conn, List<OperableTrigger> result) throws JobPersistenceException {
-                        try {
-                            List<FiredTriggerRecord> acquired = getDelegate().selectInstancesFiredTriggerRecords(conn, getInstanceId());
-                            Set<String> fireInstanceIds = new HashSet<String>();
-                            for (FiredTriggerRecord ft : acquired) {
-                                fireInstanceIds.add(ft.getFireInstanceId());
-                            }
-                            for (OperableTrigger tr : result) {
-                                if (fireInstanceIds.contains(tr.getFireInstanceId())) {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        } catch (SQLException e) {
-                            throw new JobPersistenceException("error validating trigger acquisition", e);
-                        }
+        return executeInNonManagedTXLock(lockName,
+                conn -> acquireNextTrigger(conn, noLaterThan, maxCount, timeWindow),
+                (conn, result) -> {
+                    try {
+                        return getDelegate().selectInstancesFiredTriggerRecords(conn, getInstanceId()).stream()
+                                .map(FiredTriggerRecord::getFireInstanceId)
+                                .anyMatch(fired -> result.stream().map(OperableTrigger::getFireInstanceId).anyMatch(fired::equals));
+                    } catch (SQLException e) {
+                        throw new JobPersistenceException("error validating trigger acquisition", e);
                     }
                 });
     }
@@ -2975,46 +2964,30 @@ public abstract class JobStoreSupport implements JobStore, Constants {
     @SuppressWarnings("unchecked")
     public List<TriggerFiredResult> triggersFired(final List<OperableTrigger> triggers) throws JobPersistenceException {
         return executeInNonManagedTXLock(LOCK_TRIGGER_ACCESS,
-                new TransactionCallback<List<TriggerFiredResult>>() {
-                    public List<TriggerFiredResult> execute(Connection conn) throws JobPersistenceException {
-                        List<TriggerFiredResult> results = new ArrayList<TriggerFiredResult>();
-
-                        TriggerFiredResult result;
-                        for (OperableTrigger trigger : triggers) {
-                            try {
-                              TriggerFiredBundle bundle = triggerFired(conn, trigger);
-                              result = new TriggerFiredResult(bundle);
-                            } catch (JobPersistenceException jpe) {
-                                result = new TriggerFiredResult(jpe);
-                            } catch(RuntimeException re) {
-                                result = new TriggerFiredResult(re);
-                            }
-                            results.add(result);
-                        }
-
-                        return results;
+                conn -> triggers.stream().map(trigger -> {
+                    try {
+                        return new TriggerFiredResult(triggerFired(conn, trigger));
+                    } catch (JobPersistenceException | RuntimeException jpe) {
+                        return new TriggerFiredResult(jpe);
                     }
-                },
-                new TransactionValidator<List<TriggerFiredResult>>() {
-                    @Override
-                    public Boolean validate(Connection conn, List<TriggerFiredResult> result) throws JobPersistenceException {
-                        try {
-                            List<FiredTriggerRecord> acquired = getDelegate().selectInstancesFiredTriggerRecords(conn, getInstanceId());
-                            Set<String> executingTriggers = new HashSet<String>();
-                            for (FiredTriggerRecord ft : acquired) {
-                                if (STATE_EXECUTING.equals(ft.getFireInstanceState())) {
-                                    executingTriggers.add(ft.getFireInstanceId());
-                                }
+                }).collect(toList()),
+                (conn, result) -> {
+                    try {
+                        List<FiredTriggerRecord> acquired = getDelegate().selectInstancesFiredTriggerRecords(conn, getInstanceId());
+                        Set<String> executingTriggers = new HashSet<>();
+                        for (FiredTriggerRecord ft : acquired) {
+                            if (STATE_EXECUTING.equals(ft.getFireInstanceState())) {
+                                executingTriggers.add(ft.getFireInstanceId());
                             }
-                            for (TriggerFiredResult tr : result) {
-                                if (tr.getTriggerFiredBundle() != null && executingTriggers.contains(tr.getTriggerFiredBundle().getTrigger().getFireInstanceId())) {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        } catch (SQLException e) {
-                            throw new JobPersistenceException("error validating trigger acquisition", e);
                         }
+                        for (TriggerFiredResult tr : result) {
+                            if (tr.getTriggerFiredBundle() != null && executingTriggers.contains(tr.getTriggerFiredBundle().getTrigger().getFireInstanceId())) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    } catch (SQLException e) {
+                        throw new JobPersistenceException("error validating trigger acquisition", e);
                     }
                 });
     }
@@ -3113,13 +3086,10 @@ public abstract class JobStoreSupport implements JobStore, Constants {
      */
     public void triggeredJobComplete(final OperableTrigger trigger,
             final JobDetail jobDetail, final CompletedExecutionInstruction triggerInstCode) {
-        retryExecuteInNonManagedTXLock(
-            LOCK_TRIGGER_ACCESS,
-            new VoidTransactionCallback() {
-                public void executeVoid(Connection conn) throws JobPersistenceException {
-                    triggeredJobComplete(conn, trigger, jobDetail,triggerInstCode);
-                }
-            });    
+        retryExecuteInNonManagedTXLock(LOCK_TRIGGER_ACCESS, conn -> {
+            triggeredJobComplete(conn, trigger, jobDetail,triggerInstCode);
+            return null;
+        });
     }
     
     protected void triggeredJobComplete(Connection conn,

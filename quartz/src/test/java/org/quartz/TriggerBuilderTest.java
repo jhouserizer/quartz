@@ -12,6 +12,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations
  * under the License.
+ *
  */
 package org.quartz;
 
@@ -91,7 +92,7 @@ public class TriggerBuilderTest extends TestCase {
     
     /** QTZ-157 */
     public void testTriggerBuilderWithEndTimePriorCurrrentTime() throws Exception {
-    	TriggerBuilder.newTrigger()
+        TriggerBuilder.newTrigger()
                 .withIdentity("some trigger name", "some trigger group")
                 .forJob("some job name", "some job group")
                 .startAt(new Date(System.currentTimeMillis() - 200000000))

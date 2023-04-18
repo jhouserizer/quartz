@@ -1,17 +1,18 @@
 /*
  * All content copyright Terracotta, Inc., unless otherwise indicated. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
  */
 package org.quartz.integrations.tests;
 
@@ -68,10 +69,10 @@ public final class JdbcQuartzDerbyUtilities {
         DATABASE_CONNECTION_PREFIX = "jdbc:derby://localhost:" + DATABASE_PORT + "/"
                 + DERBY_DIRECTORY + ";create=true";
 
-    	PROPS.setProperty("user","quartz");
-    	PROPS.setProperty("password","quartz");
-    	
-    	
+        PROPS.setProperty("user","quartz");
+        PROPS.setProperty("password","quartz");
+        
+        
         try {
             Class.forName(DATABASE_DRIVER_CLASS).newInstance();
         } catch (ClassNotFoundException e) {
@@ -140,7 +141,7 @@ public final class JdbcQuartzDerbyUtilities {
 
         for (String command : tearDownScript.split(";")) {
             if (!command.matches("\\s*")) {
-            	tearDown.add(command);
+                tearDown.add(command);
             }
         }
         DATABASE_TEARDOWN_STATEMENTS = tearDown;
@@ -153,7 +154,7 @@ public final class JdbcQuartzDerbyUtilities {
         File derbyDirectory = new File(DERBY_DIRECTORY);
         delete(derbyDirectory);
 
-    	Connection conn = DriverManager.getConnection(DATABASE_CONNECTION_PREFIX ,PROPS);
+        Connection conn = DriverManager.getConnection(DATABASE_CONNECTION_PREFIX ,PROPS);
         try {
             Statement statement = conn.createStatement();
             for (String command : DATABASE_SETUP_STATEMENTS) {
@@ -167,40 +168,40 @@ public final class JdbcQuartzDerbyUtilities {
     }
 
     
-	public static int triggersInAcquiredState() throws SQLException {
-		int triggersInAcquiredState = 0;
-		Connection conn = DriverManager.getConnection(DATABASE_CONNECTION_PREFIX, PROPS);
-		try {
-			Statement statement = conn.createStatement();
-			ResultSet result = statement.executeQuery("SELECT count( * ) FROM QRTZ_TRIGGERS WHERE TRIGGER_STATE = 'ACQUIRED' ");
-			while (result.next()) { 
-				triggersInAcquiredState = result.getInt(1);
-			}
-		} finally {
-			conn.close();
-		}
-		return triggersInAcquiredState;
-	}
+    public static int triggersInAcquiredState() throws SQLException {
+        int triggersInAcquiredState = 0;
+        Connection conn = DriverManager.getConnection(DATABASE_CONNECTION_PREFIX, PROPS);
+        try {
+            Statement statement = conn.createStatement();
+            ResultSet result = statement.executeQuery("SELECT count( * ) FROM QRTZ_TRIGGERS WHERE TRIGGER_STATE = 'ACQUIRED' ");
+            while (result.next()) { 
+                triggersInAcquiredState = result.getInt(1);
+            }
+        } finally {
+            conn.close();
+        }
+        return triggersInAcquiredState;
+    }
     
-	
-	public static BigDecimal timesTriggered(String triggerName,String triggerGroup) throws SQLException {
-		BigDecimal timesTriggered = BigDecimal.ZERO;
-		Connection conn = DriverManager.getConnection(DATABASE_CONNECTION_PREFIX, PROPS);
-		try {
-			PreparedStatement ps = conn.prepareStatement("SELECT TIMES_TRIGGERED FROM QRTZ_SIMPLE_TRIGGERS WHERE TRIGGER_NAME = ? AND TRIGGER_GROUP = ? ");
-			ps.setString(1, triggerName);
-			ps.setString(2, triggerGroup);
-			ResultSet result = ps.executeQuery();
-			result.next(); 
-			timesTriggered = result.getBigDecimal(1);
-		} finally {
-			conn.close();
-		}
-		return timesTriggered;
-	}
-	
+    
+    public static BigDecimal timesTriggered(String triggerName,String triggerGroup) throws SQLException {
+        BigDecimal timesTriggered = BigDecimal.ZERO;
+        Connection conn = DriverManager.getConnection(DATABASE_CONNECTION_PREFIX, PROPS);
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT TIMES_TRIGGERED FROM QRTZ_SIMPLE_TRIGGERS WHERE TRIGGER_NAME = ? AND TRIGGER_GROUP = ? ");
+            ps.setString(1, triggerName);
+            ps.setString(2, triggerGroup);
+            ResultSet result = ps.executeQuery();
+            result.next(); 
+            timesTriggered = result.getBigDecimal(1);
+        } finally {
+            conn.close();
+        }
+        return timesTriggered;
+    }
+    
     public static void destroyDatabase() throws SQLException {
-    	Connection conn = DriverManager.getConnection(DATABASE_CONNECTION_PREFIX ,PROPS);
+        Connection conn = DriverManager.getConnection(DATABASE_CONNECTION_PREFIX ,PROPS);
         try {
             Statement statement = conn.createStatement();
             for (String command : DATABASE_TEARDOWN_STATEMENTS) {
@@ -228,10 +229,10 @@ public final class JdbcQuartzDerbyUtilities {
             // nothing to do
         }
 
-		@Override
-		public void initialize() throws SQLException {
-			// nothing to do
-		}
+        @Override
+        public void initialize() throws SQLException {
+            // nothing to do
+        }
     }
 
     private JdbcQuartzDerbyUtilities() {

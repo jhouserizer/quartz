@@ -1,18 +1,18 @@
 /*
  * All content copyright Terracotta, Inc., unless otherwise indicated. All rights reserved.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not 
- * use this file except in compliance with the License. You may obtain a copy 
- * of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
  * under the License.
- * 
+ *
  */
 
 package org.quartz.integrations.tests;
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 @Ignore /* ignoring now since the bug is years ago fixed, and the test takes a full minute! */
 public class QTZ336_MissSchedulingChangeSignalTest {
     private static final Logger LOG = LoggerFactory.getLogger(QTZ336_MissSchedulingChangeSignalTest.class);
-	
+    
     @Test
     public void simpleScheduleAlwaysFiredUnder20s() throws Exception {
         Properties properties = new Properties();
@@ -68,38 +68,38 @@ public class QTZ336_MissSchedulingChangeSignalTest {
         properties.setProperty("org.quartz.jobStore.class", SlowRAMJobStore.class.getName());
         SchedulerFactory sf = new StdSchedulerFactory(properties);
         Scheduler sched = sf.getScheduler();
-		LOG.info("------- Initialization Complete -----------");
+        LOG.info("------- Initialization Complete -----------");
 
-		LOG.info("------- Scheduling Job  -------------------");
+        LOG.info("------- Scheduling Job  -------------------");
 
         JobDetail job = newJob(CollectDuractionBetweenFireTimesJob.class).withIdentity("job", "group").build();
 
         SimpleTrigger trigger = newTrigger()
-	            .withIdentity("trigger1", "group1")
+                .withIdentity("trigger1", "group1")
                 .startAt(new Date(System.currentTimeMillis() + 1000))
-	            .withSchedule(simpleSchedule()
+                .withSchedule(simpleSchedule()
                 .withIntervalInSeconds(1)
-	            .repeatForever()
-	            .withMisfireHandlingInstructionIgnoreMisfires())
-	            .build();
+                .repeatForever()
+                .withMisfireHandlingInstructionIgnoreMisfires())
+                .build();
 
         sched.scheduleJob(job, trigger);
-	        
-		// Start up the scheduler (nothing can actually run until the
-		// scheduler has been started)
-		sched.start();
+            
+        // Start up the scheduler (nothing can actually run until the
+        // scheduler has been started)
+        sched.start();
 
-		LOG.info("------- Scheduler Started -----------------");
-		
+        LOG.info("------- Scheduler Started -----------------");
+        
 
         // wait long enough so that the scheduler has an opportunity to
         // run the job in theory around 50 times
-		try {
+        try {
             Thread.sleep(50000L);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         List<Long> durationBetweenFireTimesInMillis = CollectDuractionBetweenFireTimesJob.getDurations();
         
         assertFalse("Job was not executed once!", durationBetweenFireTimesInMillis.isEmpty());
@@ -110,7 +110,7 @@ public class QTZ336_MissSchedulingChangeSignalTest {
             assertTrue("Missed an execution with one duration being between two fires: " + durationInMillis + " (all: "
                     + durationBetweenFireTimesInMillis + ")", durationInMillis < 20000);
         }
-	}
+    }
 
     /**
      * A simple job for collecting fire times in order to check that we did not miss one call, for having the race

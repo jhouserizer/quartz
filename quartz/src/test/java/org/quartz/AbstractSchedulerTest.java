@@ -12,6 +12,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations
  * under the License.
+ *
  */
 package org.quartz;
 
@@ -64,24 +65,24 @@ public abstract class AbstractSchedulerTest {
         }
     }
     
-	public static final long TEST_TIMEOUT_SECONDS = 125;
+    public static final long TEST_TIMEOUT_SECONDS = 125;
     
     public static class TestJobWithSync implements Job {
         public void execute(JobExecutionContext context)
                 throws JobExecutionException {
-        	
-			try {
-				@SuppressWarnings("unchecked")
-				List<Long> jobExecTimestamps = (List<Long>)context.getScheduler().getContext().get(DATE_STAMPS);
-				CyclicBarrier barrier =  (CyclicBarrier)context.getScheduler().getContext().get(BARRIER);
+            
+            try {
+                @SuppressWarnings("unchecked")
+                List<Long> jobExecTimestamps = (List<Long>)context.getScheduler().getContext().get(DATE_STAMPS);
+                CyclicBarrier barrier =  (CyclicBarrier)context.getScheduler().getContext().get(BARRIER);
 
-	        	jobExecTimestamps.add(System.currentTimeMillis());
-	        	
-				barrier.await(TEST_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-			} catch (Throwable e) {
-				e.printStackTrace();
-				throw new AssertionError("Await on barrier was interrupted: " + e.toString());
-			} 
+                jobExecTimestamps.add(System.currentTimeMillis());
+                
+                barrier.await(TEST_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw new AssertionError("Await on barrier was interrupted: " + e.toString());
+            } 
         }
     }
     
@@ -353,10 +354,10 @@ public abstract class AbstractSchedulerTest {
     
     @Test
     public void testAbilityToFireImmediatelyWhenStartedBefore() throws Exception {
-    	
-		List<Long> jobExecTimestamps = Collections.synchronizedList(new ArrayList<Long>());
-		CyclicBarrier barrier = new CyclicBarrier(2);
-    	
+        
+        List<Long> jobExecTimestamps = Collections.synchronizedList(new ArrayList<Long>());
+        CyclicBarrier barrier = new CyclicBarrier(2);
+        
         Scheduler sched = createScheduler("testAbilityToFireImmediatelyWhenStartedBefore", 5);
         sched.getContext().put(BARRIER, barrier);
         sched.getContext().put(DATE_STAMPS, jobExecTimestamps);
@@ -364,28 +365,28 @@ public abstract class AbstractSchedulerTest {
         
         Thread.yield();
         
-		JobDetail job1 = JobBuilder.newJob(TestJobWithSync.class).withIdentity("job1").build();
-		Trigger trigger1 = TriggerBuilder.newTrigger().forJob(job1).build(); 
-		
-		long sTime = System.currentTimeMillis();
-		
-		sched.scheduleJob(job1, trigger1);
-		
-	    barrier.await(TEST_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        JobDetail job1 = JobBuilder.newJob(TestJobWithSync.class).withIdentity("job1").build();
+        Trigger trigger1 = TriggerBuilder.newTrigger().forJob(job1).build(); 
+        
+        long sTime = System.currentTimeMillis();
+        
+        sched.scheduleJob(job1, trigger1);
+        
+        barrier.await(TEST_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
-	    sched.shutdown(true);
+        sched.shutdown(true);
 
-		long fTime = jobExecTimestamps.get(0);
-		
-		assertTrue("Immediate trigger did not fire within a reasonable amount of time.", (fTime - sTime  < 7000L));  // This is dangerously subjective!  but what else to do?
+        long fTime = jobExecTimestamps.get(0);
+        
+        assertTrue("Immediate trigger did not fire within a reasonable amount of time.", (fTime - sTime  < 7000L));  // This is dangerously subjective!  but what else to do?
     }
     
     @Test
     public void testAbilityToFireImmediatelyWhenStartedBeforeWithTriggerJob() throws Exception {
-    	
-		List<Long> jobExecTimestamps = Collections.synchronizedList(new ArrayList<Long>());
-		CyclicBarrier barrier = new CyclicBarrier(2);
-    	
+        
+        List<Long> jobExecTimestamps = Collections.synchronizedList(new ArrayList<Long>());
+        CyclicBarrier barrier = new CyclicBarrier(2);
+        
         Scheduler sched = createScheduler("testAbilityToFireImmediatelyWhenStartedBeforeWithTriggerJob", 5);
         sched.getContext().put(BARRIER, barrier);
         sched.getContext().put(DATE_STAMPS, jobExecTimestamps);
@@ -395,81 +396,81 @@ public abstract class AbstractSchedulerTest {
         Thread.yield();
 
         JobDetail job1 = JobBuilder.newJob(TestJobWithSync.class).withIdentity("job1").storeDurably().build();
-		sched.addJob(job1, false);
-		
-		long sTime = System.currentTimeMillis();
-		
-		sched.triggerJob(job1.getKey());
-		
-	    barrier.await(TEST_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        sched.addJob(job1, false);
+        
+        long sTime = System.currentTimeMillis();
+        
+        sched.triggerJob(job1.getKey());
+        
+        barrier.await(TEST_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
-	    sched.shutdown(true);
+        sched.shutdown(true);
 
-		long fTime = jobExecTimestamps.get(0);
-		
-		assertTrue("Immediate trigger did not fire within a reasonable amount of time.", (fTime - sTime  < 7000L));  // This is dangerously subjective!  but what else to do?
+        long fTime = jobExecTimestamps.get(0);
+        
+        assertTrue("Immediate trigger did not fire within a reasonable amount of time.", (fTime - sTime  < 7000L));  // This is dangerously subjective!  but what else to do?
     }
     
     @Test
     public void testAbilityToFireImmediatelyWhenStartedAfter() throws Exception {
-    	
-		List<Long> jobExecTimestamps = Collections.synchronizedList(new ArrayList<Long>());
-		CyclicBarrier barrier = new CyclicBarrier(2);
-    	
+        
+        List<Long> jobExecTimestamps = Collections.synchronizedList(new ArrayList<Long>());
+        CyclicBarrier barrier = new CyclicBarrier(2);
+        
         Scheduler sched = createScheduler("testAbilityToFireImmediatelyWhenStartedAfter", 5);
         sched.getContext().put(BARRIER, barrier);
         sched.getContext().put(DATE_STAMPS, jobExecTimestamps);
         
-		JobDetail job1 = JobBuilder.newJob(TestJobWithSync.class).withIdentity("job1").build();
-		Trigger trigger1 = TriggerBuilder.newTrigger().forJob(job1).build(); 
-		
-		long sTime = System.currentTimeMillis();
-		
-		sched.scheduleJob(job1, trigger1);
+        JobDetail job1 = JobBuilder.newJob(TestJobWithSync.class).withIdentity("job1").build();
+        Trigger trigger1 = TriggerBuilder.newTrigger().forJob(job1).build(); 
+        
+        long sTime = System.currentTimeMillis();
+        
+        sched.scheduleJob(job1, trigger1);
         sched.start();
-		
-	    barrier.await(TEST_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-	    
-	    sched.shutdown(true);
+        
+        barrier.await(TEST_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        
+        sched.shutdown(true);
 
-		long fTime = jobExecTimestamps.get(0);
-		
-		assertTrue("Immediate trigger did not fire within a reasonable amount of time.", (fTime - sTime  < 7000L));  // This is dangerously subjective!  but what else to do?
+        long fTime = jobExecTimestamps.get(0);
+        
+        assertTrue("Immediate trigger did not fire within a reasonable amount of time.", (fTime - sTime  < 7000L));  // This is dangerously subjective!  but what else to do?
     }
     
     @Test
-	public void testScheduleMultipleTriggersForAJob() throws SchedulerException {
+    public void testScheduleMultipleTriggersForAJob() throws SchedulerException {
 
-		
-		JobDetail job = newJob(TestJob.class).withIdentity("job1", "group1").build();
-		Trigger trigger1 = newTrigger()
-				.withIdentity("trigger1", "group1")
-				.startNow()
-				.withSchedule(
-						SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(1)
-								.repeatForever())
-				.build();
-		Trigger trigger2 = newTrigger()
-				.withIdentity("trigger2", "group1")
-				.startNow()
-				.withSchedule(
-						SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(1)
-								.repeatForever())
-				.build();
-		Set<Trigger> triggersForJob = new HashSet<Trigger>(); 
-		triggersForJob.add(trigger1);
-		triggersForJob.add(trigger2);
-		
-		Scheduler sched = createScheduler("testScheduleMultipleTriggersForAJob", 5);
-		sched.scheduleJob(job,triggersForJob, true);
-		
-		List<? extends Trigger> triggersOfJob = sched.getTriggersOfJob(job.getKey());
-		assertEquals(2,triggersOfJob.size());
-		assertTrue(triggersOfJob.contains(trigger1));
-		assertTrue(triggersOfJob.contains(trigger2));
-		
-		sched.shutdown(true);
-	}
+        
+        JobDetail job = newJob(TestJob.class).withIdentity("job1", "group1").build();
+        Trigger trigger1 = newTrigger()
+                .withIdentity("trigger1", "group1")
+                .startNow()
+                .withSchedule(
+                        SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(1)
+                                .repeatForever())
+                .build();
+        Trigger trigger2 = newTrigger()
+                .withIdentity("trigger2", "group1")
+                .startNow()
+                .withSchedule(
+                        SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(1)
+                                .repeatForever())
+                .build();
+        Set<Trigger> triggersForJob = new HashSet<Trigger>(); 
+        triggersForJob.add(trigger1);
+        triggersForJob.add(trigger2);
+        
+        Scheduler sched = createScheduler("testScheduleMultipleTriggersForAJob", 5);
+        sched.scheduleJob(job,triggersForJob, true);
+        
+        List<? extends Trigger> triggersOfJob = sched.getTriggersOfJob(job.getKey());
+        assertEquals(2,triggersOfJob.size());
+        assertTrue(triggersOfJob.contains(trigger1));
+        assertTrue(triggersOfJob.contains(trigger2));
+        
+        sched.shutdown(true);
+    }
     
     @Test
     public void testShutdownWithoutWaitIsUnclean() throws Exception {

@@ -1,17 +1,18 @@
-/* 
+/*
  * All content copyright Terracotta, Inc., unless otherwise indicated. All rights reserved.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not 
- * use this file except in compliance with the License. You may obtain a copy 
- * of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
  * under the License.
+ *
  */
 package org.quartz;
 
@@ -78,11 +79,11 @@ public class AnnualCalendarTest extends SerializationTestSupport {
      * See: QUARTZ-590
      */
     public void testDaysExcluded() {
-		AnnualCalendar annualCalendar = new AnnualCalendar();
-		
-		annualCalendar.setDaysExcluded(null);
-		
-		assertNotNull("Annual calendar daysExcluded property should have been set to empty ArrayList, not null.",annualCalendar.getDaysExcluded());
+        AnnualCalendar annualCalendar = new AnnualCalendar();
+        
+        annualCalendar.setDaysExcluded(null);
+        
+        assertNotNull("Annual calendar daysExcluded property should have been set to empty ArrayList, not null.",annualCalendar.getDaysExcluded());
     }
 
     /**
@@ -133,12 +134,12 @@ public class AnnualCalendarTest extends SerializationTestSupport {
         
         annualCalendar.setDayExcluded((Calendar) day.clone(), true);
         
-    	day.set(Calendar.YEAR, 2008);
-    	day.set(Calendar.MONTH, Calendar.FEBRUARY);
-    	day.set(Calendar.DAY_OF_MONTH, 1);
-    	annualCalendar.setDayExcluded((Calendar) day.clone(), true);
+        day.set(Calendar.YEAR, 2008);
+        day.set(Calendar.MONTH, Calendar.FEBRUARY);
+        day.set(Calendar.DAY_OF_MONTH, 1);
+        annualCalendar.setDayExcluded((Calendar) day.clone(), true);
  
-    	assertTrue("The day 1 February is expected to be excluded but it is not", annualCalendar.isDayExcluded(day));    	
+        assertTrue("The day 1 February is expected to be excluded but it is not", annualCalendar.isDayExcluded(day));        
     }
 
     /**
@@ -154,7 +155,7 @@ public class AnnualCalendarTest extends SerializationTestSupport {
         
         annualCalendar.setDayExcluded((Calendar) day.clone(), true);
 
-    	// Trying to remove the 23th of June
+        // Trying to remove the 23th of June
         day.set(Calendar.MONTH, Calendar.JUNE);
         day.set(Calendar.YEAR, 2008);
         day.set(Calendar.DAY_OF_MONTH, 23);
