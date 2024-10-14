@@ -29,7 +29,7 @@ dependencies {
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
 
     compileOnly 'jakarta.transaction:jakarta.transaction-api:2.0.1'
-    compileOnly 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 
 /*
             <dependency>
